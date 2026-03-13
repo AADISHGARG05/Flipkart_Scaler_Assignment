@@ -7,25 +7,42 @@ import { FaStar } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
-  const router = useRouter();   
+
+  const API = "https://flipkart-backend-oc3i.onrender.com";
+
+  const router = useRouter();
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/products/")
+
+    fetch(`${API}/products/`)
       .then((res) => res.json())
-      .then((data) => setProducts(data));
+      .then((data) => setProducts(data))
+      .catch((err) => console.error("Product fetch error:", err));
+
   }, []);
 
   const addToCart = async (id) => {
-    await fetch("http://127.0.0.1:8000/cart/add", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ product_id: id, quantity: 1 }),
-    });
 
-    alert("Added to cart");
+    try {
+
+      await fetch(`${API}/cart/add`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ product_id: id, quantity: 1 }),
+      });
+
+      alert("Added to cart 🛒");
+
+    } catch (error) {
+
+      console.error("Cart error:", error);
+      alert("Failed to add product");
+
+    }
+
   };
 
   return (
@@ -42,36 +59,36 @@ export default function Home() {
         {/* CATEGORY SIDEBAR */}
         <aside className="w-60 bg-white p-4 rounded shadow">
 
-<h2 className="font-bold mb-3">Categories</h2>
+          <h2 className="font-bold mb-3">Categories</h2>
 
-<ul className="space-y-2 text-gray-700">
+          <ul className="space-y-2 text-gray-700">
 
-<li
-onClick={() => router.push("/search?q=iphone")}
-className="hover:text-blue-600 cursor-pointer"
->
-Electronics
-</li>
+            <li
+              onClick={() => router.push("/search?q=iphone")}
+              className="hover:text-blue-600 cursor-pointer"
+            >
+              Electronics
+            </li>
 
-<li
-onClick={() => router.push("/search?q=jeans")}
-className="hover:text-blue-600 cursor-pointer"
->
-Fashion
-</li>
+            <li
+              onClick={() => router.push("/search?q=jeans")}
+              className="hover:text-blue-600 cursor-pointer"
+            >
+              Fashion
+            </li>
 
-<li
-onClick={() => router.push("/search?q=shoes")}
-className="hover:text-blue-600 cursor-pointer"
->
-Footwear
-</li>
+            <li
+              onClick={() => router.push("/search?q=shoes")}
+              className="hover:text-blue-600 cursor-pointer"
+            >
+              Footwear
+            </li>
 
-</ul>
+          </ul>
 
-</aside>
+        </aside>
 
-        {/* PRODUCTS */}
+        {/* PRODUCTS GRID */}
         <div className="grid grid-cols-4 gap-4 flex-1">
 
           {products.map((product) => (
@@ -96,9 +113,8 @@ Footwear
                   {product.description}
                 </p>
 
-                {/* Rating */}
                 <div className="flex text-yellow-500 mt-1">
-                  <FaStar/><FaStar/><FaStar/><FaStar/><FaStar/>
+                  <FaStar /><FaStar /><FaStar /><FaStar /><FaStar />
                 </div>
 
                 <p className="text-green-600 font-bold mt-2">

@@ -5,22 +5,32 @@ import Link from "next/link";
 
 export default function CartPage() {
 
+  const API = "https://flipkart-backend-oc3i.onrender.com";
+
   const [cart, setCart] = useState([]);
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/cart/")
+    fetch(`${API}/cart/`)
       .then((res) => res.json())
-      .then((data) => setCart(data));
+      .then((data) => setCart(data))
+      .catch((err) => console.error("Cart fetch error:", err));
   }, []);
 
   const placeOrder = async () => {
+    try {
+      await fetch(`${API}/orders/create`, {
+        method: "POST",
+      });
 
-    await fetch("http://127.0.0.1:8000/orders/create", {
-      method: "POST",
-    });
+      alert("Order placed successfully 🎉");
 
-    alert("Order placed successfully");
+      // clear cart UI after order
+      setCart([]);
 
+    } catch (error) {
+      console.error("Order error:", error);
+      alert("Order failed");
+    }
   };
 
   return (
@@ -42,7 +52,7 @@ export default function CartPage() {
       </div>
 
       {cart.length === 0 && (
-        <p>Your cart is empty</p>
+        <p className="text-gray-600">Your cart is empty</p>
       )}
 
       <div className="space-y-4">

@@ -7,32 +7,48 @@ import { FaStar } from "react-icons/fa";
 
 export default function ProductPage() {
 
+  const API = "https://flipkart-backend-oc3i.onrender.com";
+
   const params = useParams();
   const id = params.id;
 
   const [product, setProduct] = useState(null);
 
   useEffect(() => {
-    fetch(`http://127.0.0.1:8000/products/${id}`)
+
+    fetch(`${API}/products/${id}`)
       .then((res) => res.json())
-      .then((data) => setProduct(data));
+      .then((data) => setProduct(data))
+      .catch((err) => console.error("Product fetch error:", err));
+
   }, [id]);
 
   const addToCart = async () => {
 
-    await fetch("http://127.0.0.1:8000/cart/add", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ product_id: id, quantity: 1 }),
-    });
+    try {
 
-    alert("Product added to cart");
+      await fetch(`${API}/cart/add`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ product_id: id, quantity: 1 }),
+      });
+
+      alert("Product added to cart 🛒");
+
+    } catch (error) {
+
+      console.error("Add to cart error:", error);
+      alert("Failed to add product");
+
+    }
 
   };
 
-  if (!product) return <p className="p-10">Loading...</p>;
+  if (!product) {
+    return <p className="p-10 text-lg">Loading product...</p>;
+  }
 
   return (
     <div className="bg-gray-100 min-h-screen p-10">
@@ -65,7 +81,7 @@ export default function ProductPage() {
 
           {/* Rating */}
           <div className="flex text-yellow-500 mb-3">
-            <FaStar/><FaStar/><FaStar/><FaStar/><FaStar/>
+            <FaStar /><FaStar /><FaStar /><FaStar /><FaStar />
             <span className="text-gray-600 ml-2">(245 ratings)</span>
           </div>
 
@@ -87,6 +103,7 @@ export default function ProductPage() {
         </div>
 
       </div>
+
     </div>
   );
 }
