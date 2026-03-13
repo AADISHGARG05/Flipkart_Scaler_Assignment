@@ -17,6 +17,40 @@ app = FastAPI()
 # create tables
 Base.metadata.create_all(bind=engine)
 
+from sqlalchemy.orm import Session
+from app.config.database import SessionLocal
+from app.models.product import Product
+
+db = SessionLocal()
+
+# check if products exist
+if db.query(Product).count() == 0:
+    p1 = Product(
+        name="iPhone 15",
+        description="Apple smartphone",
+        price=79999,
+        stock=10
+    )
+
+    p2 = Product(
+        name="Levis Jeans",
+        description="Men blue denim jeans",
+        price=2999,
+        stock=20
+    )
+
+    p3 = Product(
+        name="Nike Shoes",
+        description="Running shoes",
+        price=4999,
+        stock=15
+    )
+
+    db.add_all([p1, p2, p3])
+    db.commit()
+
+db.close()
+
 origins = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
