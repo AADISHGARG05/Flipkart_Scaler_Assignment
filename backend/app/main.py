@@ -19,7 +19,8 @@ Base.metadata.create_all(bind=engine)
 
 origins = [
     "http://localhost:3000",
-    "http://127.0.0.1:3000"
+    "http://127.0.0.1:3000",
+    "https://flipkart-scaler-assignment-o6ze-1nzxsho9-aadish-s-projects.vercel.app"
 ]
 
 app.add_middleware(
